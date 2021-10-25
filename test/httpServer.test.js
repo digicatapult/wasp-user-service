@@ -2,6 +2,7 @@ const { describe, before, it } = require('mocha')
 const { expect } = require('chai')
 
 const { setupServer } = require('./helpers/server')
+const { API_VERSION } = require('../app/env')
 
 describe('health', function () {
   const context = {}
@@ -15,6 +16,6 @@ describe('health', function () {
   })
 
   it('should return success', function () {
-    expect(context.response.body).to.deep.equal({ status: 'ok' })
+    expect(context.response.body).to.deep.equal({ status: 'ok', version: API_VERSION })
   })
 })

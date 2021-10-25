@@ -1,0 +1,173 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wasp-user-service.fullname" . }}
+  labels:
+    {{- include "wasp-user-service.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ include "wasp-user-service.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      labels:
+        name: {{ include "wasp-user-service.fullname" . }}
+    spec:
+      {{- include "wasp-user-service.imagePullSecrets" . | indent 6 }}
+{{ if and (not .Values.config.init.dbMigration.enabled) (not .Values.config.init.adminPassword.enabled) }}
+      initContainers: []
+{{ else }}
+      initContainers:
+        {{ if .Values.config.init.dbMigration.enabled -}}
+        - name: {{ include "wasp-user-service.initDb.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          command: ['npx', 'knex', "migrate:latest", "--env", "production"]
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbPort
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbUsername
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbPassword
+        {{- end }}
+        {{ if .Values.config.init.adminPassword.enabled -}}
+        - name: {{ include "wasp-user-service.initWaspAdmin.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: initAdminLogLevel
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbPort
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbUsername
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbPassword
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: initAdminPassword
+          command: ['node']
+          args: ['scripts/dbAdminInit/index.js']
+        {{- end }}
+{{- end }}
+
+      containers:
+        - name: {{ include "wasp-user-service.fullname" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.config.port }}
+            initialDelaySeconds: 15
+            timeoutSeconds: 3
+            periodSeconds: 5
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: port
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: logLevel
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbPort
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbUsername
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-secret
+                  key: dbPassword
+            - name: AUTH_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: authServiceHost
+            - name: AUTH_SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: authServicePort
+            - name: AUTH_SERVICE_API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: authServiceApiVersion
+            - name: AUTH_TOKEN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: authTokenName
+            - name: AUTH_TOKEN_EXPIRY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-user-service.fullname" . }}-config
+                  key: authTokenExpiryDays

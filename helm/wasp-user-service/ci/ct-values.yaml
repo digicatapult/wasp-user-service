@@ -1,0 +1,9 @@
+config:
+  init:
+    adminPassword:
+      enabled: true
+      password: wibble
+image:
+  repository: 'wasp-user-service'
+  tag: 'latest'
+  PullPolicy: Never

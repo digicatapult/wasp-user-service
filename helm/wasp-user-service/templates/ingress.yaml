@@ -1,0 +1,50 @@
+{{- $fullName := include "wasp-user-service.fullname" . -}}
+{{- $ingressPaths := .Values.ingress.paths -}}
+{{- $ingressAuthenticatedPaths := .Values.ingress.authenticatedPaths -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+  {{- include "wasp-user-service.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+    - http:
+        paths:
+          {{- range $ingressPaths }}
+          - pathType: Prefix
+            path: {{ . }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: 80
+          {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-authenticated
+  labels:
+  {{- include "wasp-user-service.labels" . | nindent 4 }}
+  {{- with .Values.ingress.authenticatedAnnotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+    - http:
+        paths:
+          {{- range $ingressAuthenticatedPaths }}
+          - pathType: Prefix
+            path: {{ . }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: 80
+          {{- end }}

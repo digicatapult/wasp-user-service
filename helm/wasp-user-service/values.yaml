@@ -1,0 +1,35 @@
+postgresql:
+  enabled: true
+  postgresqlDatabase: users
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+replicaCount: 1
+config:
+  port: 80
+  logLevel: info
+  authServiceHost: wasp-authentication-service
+  authServicePort: 80
+  authServiceApiVersion: v1
+  authTokenName: Login
+  authTokenExpiryDays: 1
+  dbName: users
+  dbPort: 5432
+  externalPostgresql: null
+  init:
+    dbMigration:
+      enabled: true
+    adminPassword:
+      enabled: false
+      logLevel: info
+      password: null
+
+image:
+  repository: ghcr.io/digicatapult/wasp-user-service
+  pullPolicy: IfNotPresent
+  tag: 'v0.0.10'
+  pullSecrets: ['ghcr-digicatapult']
+ingress:
+  paths:
+    - /v1/login
+  authenticatedPaths:
+    - /v1/user

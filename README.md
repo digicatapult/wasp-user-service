@@ -1,25 +1,54 @@
-# wasp-service-template
+# wasp-user-service
 
-Template repository for bootstrapping new WASP services. Use this repo as a template in github when creating new `WASP` services. When forked a new pull request will automatically be created in the new repository to apply templating. Before merging you should also give access to the forked repo the `GITHUB_TOKEN` organisation secret prior to merging. This will allow the release workflow to run successfully on merging.
+User service for `WASP`. Handles the storage and retrieval of users and the issuance of login tokens.
 
-## What this repo provides
+## Getting started
 
-This repo provides:
+`wasp-user-service` can be run in a similar way to most nodejs application. First install required dependencies using `npm`:
 
-- basic node.js project structure for a WASP service
-- linting with WASP prettier configuration
-- open-sourcing materials
-- Docker file
-- A simple helm chart for the service
-- A service with a healthcheck endpoint on `/health`
-- Testing apparatus using `mocha`, `chai` and `supertest`
-- Github workflows for testing and release
+```sh
+npm install
+```
+
+`wasp-user-service` depends on a `postgresql` database dependency which can be brought locally up using docker:
+
+```sh
+docker-compose up -d
+```
+
+The database must be initialised with:
+
+```sh
+npx knex migrate:latest
+```
+
+And finally you can run the application in development mode with:
+
+```sh
+npm run dev
+```
 
 ## Environment Variables
 
-`wasp-service-template` is configured primarily using environment variables as follows:
+`wasp-user-service` is configured primarily using environment variables as follows:
 
-| variable  | required | default | description                                                                          |
-| :-------- | :------: | :-----: | :----------------------------------------------------------------------------------- |
-| LOG_LEVEL |    N     | `info`  | Logging level. Valid values are [`trace`, `debug`, `info`, `warn`, `error`, `fatal`] |
-| PORT      |    N     |  `80`   | Port on which the service will listen                                                |
+| variable                 | required |            default            | description                                                                          |
+| :----------------------- | :------: | :---------------------------: | :----------------------------------------------------------------------------------- |
+| LOG_LEVEL                |    N     |            `info`             | Logging level. Valid values are [`trace`, `debug`, `info`, `warn`, `error`, `fatal`] |
+| PORT                     |    N     |            `3000`             | Port on which the service will listen                                                |
+| DB_HOST                  |    Y     |               -               | Hostname for the db                                                                  |
+| DB_PORT                  |    N     |             5432              | Port to connect to the db                                                            |
+| DB_NAME                  |    N     |            `users`            | Name of the database to connect to                                                   |
+| DB_USERNAME              |    Y     |               -               | Username to connect to the database with                                             |
+| DB_PASSWORD              |    Y     |               -               | Password to connect to the database with                                             |
+| API_VERSION              |    N     |    `package.json version`     | Official API version                                                                 |
+| API_MAJOR_VERSION        |    N     |             `v1`              | Major API version                                                                    |
+| AUTH_SERVICE_HOST        |    N     | `wasp-authentication-service` | Authentication service host                                                          |
+| AUTH_SERVICE_PORT        |    N     |             `80`              | Authentication service port                                                          |
+| AUTH_SERVICE_API_VERSION |    N     |             `v1`              | Authentication service major API version                                             |
+| AUTH_TOKEN_NAME          |    N     |            `login`            | Authentication service token name sent on the body of authentication service request |
+| AUTH_TOKEN_EXPIRY        |    N     |              `1`              | Expiration of auth token in days                                                     |
+
+## Database structure
+
+The structure of the database backing `wasp-user-service` can be found in [docs/db.md](./docs/db.md)
