@@ -1,0 +1,23 @@
+apiVersion: v1
+entries:
+  wasp-user-service:
+  - apiVersion: v2
+    appVersion: 0.0.10
+    created: "2021-10-25T16:55:30.481553972Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: ^10.12.2
+    description: A Helm chart for wasp-user-service
+    digest: 7751edeccba874882f2a35ca4ac6a1e0e7f077a21b6e2442aa8fbf2b75624790
+    maintainers:
+    - email: opensource@digicatapult.org.uk
+      name: digicatapult
+      url: www.digicatapult.org.uk
+    name: wasp-user-service
+    type: application
+    urls:
+    - https://digicatapult.github.io/wasp-user-service/wasp-user-service-0.0.10.tgz
+    version: 0.0.10
+generated: "2021-10-25T16:55:30.47628467Z"
