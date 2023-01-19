@@ -1,6 +1,6 @@
-const { expect } = require('chai')
+import { expect } from 'chai'
 
-const { assertPasswordValid } = require('../../app/passwords')
+import { assertPasswordValid } from '../../app/passwords.js'
 
 const assertNewUser = (result, input) => {
   expect(result.id).to.be.a('string')
@@ -30,4 +30,4 @@ const assertListAPItoDb = (apiUsers, dbUsers) => {
   }
 }
 
-module.exports = { assertNewUser, assertAPIUserToDb, assertListAPItoDb }
+export { assertNewUser, assertAPIUserToDb, assertListAPItoDb }

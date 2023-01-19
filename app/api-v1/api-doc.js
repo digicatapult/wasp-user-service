@@ -1,4 +1,6 @@
-const { PORT, API_VERSION, API_MAJOR_VERSION } = require('../env')
+import env from '../env.js'
+
+const { PORT, API_VERSION } = env
 
 const apiDoc = {
   openapi: '3.0.3',
@@ -8,7 +10,7 @@ const apiDoc = {
   },
   servers: [
     {
-      url: `http://localhost:${PORT}/${API_MAJOR_VERSION}`,
+      url: `http://localhost:${PORT}/v1`,
     },
   ],
   components: {
@@ -91,4 +93,4 @@ const apiDoc = {
   paths: {},
 }
 
-module.exports = apiDoc
+export default apiDoc

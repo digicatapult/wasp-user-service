@@ -1,1 +1,1 @@
-ignores: ['pg']
+ignores: ['pg', '@babel/plugin-syntax-import-assertions']

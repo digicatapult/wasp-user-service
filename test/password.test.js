@@ -1,12 +1,10 @@
-const { describe, before, beforeEach, afterEach, it } = require('mocha')
-const { expect } = require('chai')
-const bcrypt = require('bcrypt')
+import { describe, before, beforeEach, afterEach, it } from 'mocha'
+import { expect } from 'chai'
+import bcrypt from 'bcrypt'
 
-const { setupServer } = require('./helpers/server')
-const { API_MAJOR_VERSION } = require('../app/env')
-
-const { addUser, sortUsers, cleanUsers, getUser } = require('./helpers/users')
-const { assertAPIUserToDb } = require('./helpers/assert')
+import { setupServer } from './helpers/server.js'
+import { addUser, sortUsers, cleanUsers, getUser } from './helpers/users.js'
+import { assertAPIUserToDb } from './helpers/assert.js'
 
 const validPassword = 'aA0$0000'
 const invalidPasswordCases = [
@@ -37,7 +35,7 @@ describe('PUT /user/current/password', function () {
 
   it('should update current user password as admin', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
+      .put(`/v1/user/current/password`)
       .set('User-Id', context.adminUser.id)
       .send({ password: validPassword })
     const { password_hash } = await getUser(context.adminUser.id)
@@ -50,7 +48,7 @@ describe('PUT /user/current/password', function () {
 
   it('should update current user password as user', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
+      .put(`/v1/user/current/password`)
       .set('User-Id', context.regularUser.id)
       .send({ password: validPassword })
     const { password_hash } = await getUser(context.regularUser.id)
@@ -63,7 +61,7 @@ describe('PUT /user/current/password', function () {
 
   it('should return 401 as removed user', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
+      .put(`/v1/user/current/password`)
       .set('User-Id', context.disabledUser.id)
       .send({ password: validPassword })
     const { password_hash } = await getUser(context.disabledUser.id)
@@ -74,15 +72,13 @@ describe('PUT /user/current/password', function () {
   })
 
   it('should return 401 without user-id header', async function () {
-    const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
-      .send({ password: validPassword })
+    const response = await context.request.put(`/v1/user/current/password`).send({ password: validPassword })
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 with invalid user-id header', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
+      .put(`/v1/user/current/password`)
       .set('User-Id', 'not-a-uuid')
       .send({ password: validPassword })
     expect(response.status).to.equal(401)
@@ -90,7 +86,7 @@ describe('PUT /user/current/password', function () {
 
   it(`should 400 with no password`, async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/current/password`)
+      .put(`/v1/user/current/password`)
       .set('User-Id', context.adminUser.id)
       .send({})
     const { password_hash } = await getUser(context.adminUser.id)
@@ -103,7 +99,7 @@ describe('PUT /user/current/password', function () {
   for (const { name, value } of invalidPasswordCases) {
     it(`should 400 with bad password (${name})`, async function () {
       const response = await context.request
-        .put(`/${API_MAJOR_VERSION}/user/current/password`)
+        .put(`/v1/user/current/password`)
         .set('User-Id', context.adminUser.id)
         .send({ password: value })
       const { password_hash } = await getUser(context.adminUser.id)
@@ -135,7 +131,7 @@ describe('PUT /user/:id/password', function () {
 
   it('should update specified user password as admin', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}/password`)
+      .put(`/v1/user/${context.regularUser.id}/password`)
       .set('User-Id', context.adminUser.id)
       .send({})
     const { password_hash } = await getUser(context.regularUser.id)
@@ -149,7 +145,7 @@ describe('PUT /user/:id/password', function () {
 
   it('should return 401 as regular user', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}/password`)
+      .put(`/v1/user/${context.regularUser.id}/password`)
       .set('User-Id', context.regularUser.id)
       .send({})
     expect(response.status).to.equal(401)
@@ -157,36 +153,33 @@ describe('PUT /user/:id/password', function () {
 
   it('should return 401 as removed user', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}/password`)
+      .put(`/v1/user/${context.regularUser.id}/password`)
       .set('User-Id', context.disabledUser.id)
       .send({})
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 as without user-id header', async function () {
-    const response = await context.request.put(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}/password`).send({})
+    const response = await context.request.put(`/v1/user/${context.regularUser.id}/password`).send({})
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 with invalid user-id header', async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}/password`)
+      .put(`/v1/user/${context.regularUser.id}/password`)
       .set('User-Id', 'not-a-uuid')
       .send({})
     expect(response.status).to.equal(401)
   })
 
   it('should return 400 with invalid user uuid', async function () {
-    const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/foo/password`)
-      .set('User-Id', context.adminUser.id)
-      .send({})
+    const response = await context.request.put(`/v1/user/foo/password`).set('User-Id', context.adminUser.id).send({})
     expect(response.status).to.equal(400)
   })
 
   it("should return 404 when user doesn't exist", async function () {
     const response = await context.request
-      .put(`/${API_MAJOR_VERSION}/user/00000000-0000-0000-0000-000000000000/password`)
+      .put(`/v1/user/00000000-0000-0000-0000-000000000000/password`)
       .set('User-Id', context.adminUser.id)
       .send({})
     expect(response.status).to.equal(404)

@@ -1,4 +1,4 @@
-module.exports = function (userService) {
+export default function (userService) {
   const doc = {
     POST: async function login(req, res) {
       const { name, password } = req.body

@@ -1,9 +1,11 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const jwt = require('jwt-simple')
-const moment = require('moment')
+import express from 'express'
+import bodyParser from 'body-parser'
+import jwt from 'jwt-simple'
+import moment from 'moment'
 
-const { AUTH_SERVICE_PORT, AUTH_SERVICE_API_VERSION } = require('../../app/env')
+import env from '../../app/env.js'
+
+const { AUTH_SERVICE_PORT, AUTH_SERVICE_API_VERSION } = env
 
 const authServer = async (context) => {
   const app = express()
@@ -46,4 +48,4 @@ const authServer = async (context) => {
   })
 }
 
-module.exports = { authServer }
+export { authServer }

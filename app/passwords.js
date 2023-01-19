@@ -1,6 +1,6 @@
 const MIN_PASSWORD_LENGTH = 8
 
-const { randomInt } = require('crypto')
+import { randomInt } from 'crypto'
 
 const assertPasswordValid = (password) => {
   if (password.length < MIN_PASSWORD_LENGTH) throw new Error('Failed password validity - min 8 chars')
@@ -47,7 +47,4 @@ const generatePassword = () => {
   return passwordCharGens.map((g) => g()).join('')
 }
 
-module.exports = {
-  assertPasswordValid,
-  generatePassword,
-}
+export { assertPasswordValid, generatePassword }

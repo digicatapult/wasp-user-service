@@ -1,8 +1,8 @@
-const knex = require('knex')
+import knex from 'knex'
 
-const adminCredentialSeed = require('./admin_init')
-const env = require('./env')
-const logger = require('./logger')
+import adminCredentialSeed from './admin_init.js'
+import env from './env.js'
+import logger from './logger.js'
 
 const client = knex({
   client: 'pg',

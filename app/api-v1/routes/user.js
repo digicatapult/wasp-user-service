@@ -1,11 +1,11 @@
-const validatorUtil = require('../../validatorUtil')
+import { isUuidInvalid, validateNewUser } from '../../validatorUtil.js'
 
-module.exports = function (userService) {
+export default function (userService) {
   const doc = {
     GET: async function listUsersHandler(req, res) {
       const userId = req.headers['user-id']
 
-      if (!userId || validatorUtil.isUuidInvalid(userId)) {
+      if (!userId || isUuidInvalid(userId)) {
         res.status(401).json({})
         return
       }
@@ -21,7 +21,7 @@ module.exports = function (userService) {
     },
     POST: async function createUserHandler(req, res) {
       const userId = req.headers['user-id']
-      if (!userId || validatorUtil.isUuidInvalid(userId)) {
+      if (!userId || isUuidInvalid(userId)) {
         res.status(401).json({})
         return
       }
@@ -32,7 +32,7 @@ module.exports = function (userService) {
         return
       }
 
-      const newUser = validatorUtil.validateNewUser(req.body)
+      const newUser = validateNewUser(req.body)
       if (!newUser) {
         res.status(400).json({})
         return

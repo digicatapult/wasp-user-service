@@ -1,10 +1,10 @@
-const bcrypt = require('bcrypt')
-const env = require('./env')
+import bcrypt from 'bcrypt'
+import env from './env.js'
 
 const expiryDate = new Date()
 expiryDate.setFullYear(2050)
 
-module.exports = async ({ knex, logger }) => {
+export default async ({ knex, logger }) => {
   if (!env.ADMIN_PASSWORD) {
     throw new Error('Invalid or missing admin password')
   }

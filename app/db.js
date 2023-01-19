@@ -1,6 +1,6 @@
-const knex = require('knex')
+import knex from 'knex'
 
-const env = require('./env')
+import env from './env.js'
 
 const client = knex({
   client: 'pg',
@@ -50,10 +50,4 @@ const updateUser = async ({ userId, ...update }) => {
   return user
 }
 
-module.exports = {
-  client,
-  findUsers,
-  getUserPassword,
-  createUser,
-  updateUser,
-}
+export { client, findUsers, getUserPassword, createUser, updateUser }
