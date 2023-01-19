@@ -1,4 +1,4 @@
-exports.up = async (knex) => {
+export const up = async (knex) => {
   // check extension is not installed
   const [extInstalled] = await knex('pg_extension').select('*').where({ extname: 'uuid-ossp' })
 
@@ -19,14 +19,14 @@ exports.up = async (knex) => {
     def.datetime('updated_at').notNullable().default(now())
   })
 
-  const [id] = await knex('users')
+  const [{ id }] = await knex('users')
     .insert({
       name: 'admin',
       role: 'admin',
       password_hash: '',
       created_by_id: uuidGenerateV4(),
     })
-    .returning('id')
+    .returning(['id'])
 
   await knex('users').update({ created_by_id: id }).where({ id })
 
@@ -35,7 +35,7 @@ exports.up = async (knex) => {
   })
 }
 
-exports.down = async (knex) => {
+export const down = async (knex) => {
   await knex.schema.dropTable('users')
   await knex.raw('DROP TYPE users_role')
 }

@@ -1,16 +1,12 @@
-const bcrypt = require('bcrypt')
-const fetch = require('node-fetch')
-const moment = require('moment')
-const {
-  AUTH_SERVICE_HOST,
-  AUTH_SERVICE_PORT,
-  AUTH_SERVICE_API_VERSION,
-  AUTH_TOKEN_NAME,
-  AUTH_TOKEN_EXPIRY,
-} = require('../../env')
+import bcrypt from 'bcrypt'
+import fetch from 'node-fetch'
+import moment from 'moment'
 
-const { findUsers, getUserPassword, createUser, updateUser } = require('../../db')
-const { generatePassword, assertPasswordValid } = require('../../passwords')
+import env from '../../env.js'
+import { findUsers, getUserPassword, createUser, updateUser } from '../../db.js'
+import { generatePassword, assertPasswordValid } from '../../passwords.js'
+
+const { AUTH_SERVICE_HOST, AUTH_SERVICE_PORT, AUTH_SERVICE_API_VERSION, AUTH_TOKEN_NAME, AUTH_TOKEN_EXPIRY } = env
 
 const authApiPrefix = `http://${AUTH_SERVICE_HOST}:${AUTH_SERVICE_PORT}/${AUTH_SERVICE_API_VERSION}`
 
@@ -128,11 +124,4 @@ async function login({ name: username, password: userPassword }) {
   return { statusCode: 201, result: token }
 }
 
-module.exports = {
-  getUser,
-  getUsers,
-  postUser,
-  patchUser,
-  putUserPassword,
-  login,
-}
+export default { getUser, getUsers, postUser, patchUser, putUserPassword, login }

@@ -42,7 +42,6 @@ npm run dev
 | DB_USERNAME              |    Y     |               -               | Username to connect to the database with                                             |
 | DB_PASSWORD              |    Y     |               -               | Password to connect to the database with                                             |
 | API_VERSION              |    N     |    `package.json version`     | Official API version                                                                 |
-| API_MAJOR_VERSION        |    N     |             `v1`              | Major API version                                                                    |
 | AUTH_SERVICE_HOST        |    N     | `wasp-authentication-service` | Authentication service host                                                          |
 | AUTH_SERVICE_PORT        |    N     |             `80`              | Authentication service port                                                          |
 | AUTH_SERVICE_API_VERSION |    N     |             `v1`              | Authentication service major API version                                             |

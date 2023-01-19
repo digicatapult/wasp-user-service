@@ -1,6 +1,6 @@
-const { before } = require('mocha')
+import { before } from 'mocha'
 
-const { setupServer } = require('./server')
+import { setupServer } from './server.js'
 
 before(async function () {
   this.timeout(10000)

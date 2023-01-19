@@ -1,12 +1,12 @@
-const validatorUtil = require('../../../../validatorUtil')
+import { isUuidInvalid } from '../../../../validatorUtil.js'
 
-module.exports = function (userService) {
+export default function (userService) {
   const doc = {
     PUT: async function updateUserPasswordHandler(req, res) {
       const currentUserId = req.headers['user-id']
       const password = req.body.password
 
-      if (!currentUserId || validatorUtil.isUuidInvalid(currentUserId)) {
+      if (!currentUserId || isUuidInvalid(currentUserId)) {
         res.status(401).json({})
         return
       }

@@ -1,4 +1,4 @@
-const validator = require('validator')
+import validator from 'validator'
 
 const isUuidInvalid = (uuid) => {
   return !uuid || !validator.isUUID(uuid)
@@ -17,7 +17,4 @@ const validateNewUser = ({ name, role }) => {
   return { name, role }
 }
 
-module.exports = {
-  isUuidInvalid,
-  validateNewUser,
-}
+export { isUuidInvalid, validateNewUser }

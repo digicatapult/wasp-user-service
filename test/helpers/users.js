@@ -1,6 +1,6 @@
-const knex = require('knex')
+import knex from 'knex'
 
-const env = require('../../app/env')
+import env from '../../app/env.js'
 
 const client = knex({
   client: 'pg',
@@ -42,11 +42,4 @@ const getUserByName = async (name) => {
 
 const sortUsers = (users) => [...users].sort((a, b) => (a.id < b.id ? -1 : 1))
 
-module.exports = {
-  addUser,
-  removeUser,
-  sortUsers,
-  cleanUsers,
-  getUser,
-  getUserByName,
-}
+export { addUser, removeUser, sortUsers, cleanUsers, getUser, getUserByName }

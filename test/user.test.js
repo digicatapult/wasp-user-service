@@ -1,15 +1,14 @@
-const { describe, before, beforeEach, afterEach, it } = require('mocha')
-const { expect } = require('chai')
-const bcrypt = require('bcrypt')
-const jwt = require('jwt-simple')
-const moment = require('moment')
+import { describe, before, beforeEach, afterEach, it } from 'mocha'
+import { expect } from 'chai'
+import bcrypt from 'bcrypt'
+import jwt from 'jwt-simple'
+import moment from 'moment'
 
-const { setupServer } = require('./helpers/server')
-const { API_MAJOR_VERSION } = require('../app/env')
+import { setupServer } from './helpers/server.js'
 
-const { addUser, cleanUsers, getUser } = require('./helpers/users')
-const { assertAPIUserToDb } = require('./helpers/assert')
-const { authServer } = require('./helpers/authMock')
+import { addUser, cleanUsers, getUser } from './helpers/users.js'
+import { assertAPIUserToDb } from './helpers/assert.js'
+import { authServer } from './helpers/authMock.js'
 
 describe('GET /user/current', function () {
   const context = {}
@@ -26,35 +25,29 @@ describe('GET /user/current', function () {
   })
 
   it('should return current user as admin', async function () {
-    const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/current`)
-      .set('User-Id', context.adminUser.id)
+    const response = await context.request.get(`/v1/user/current`).set('User-Id', context.adminUser.id)
     expect(response.status).to.equal(200)
     assertAPIUserToDb(response.body, context.adminUser)
   })
 
   it('should return current user as user', async function () {
-    const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/current`)
-      .set('User-Id', context.regularUser.id)
+    const response = await context.request.get(`/v1/user/current`).set('User-Id', context.regularUser.id)
     expect(response.status).to.equal(200)
     assertAPIUserToDb(response.body, context.regularUser)
   })
 
   it('should return 401 as removed user', async function () {
-    const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/current`)
-      .set('User-Id', context.disabledUser.id)
+    const response = await context.request.get(`/v1/user/current`).set('User-Id', context.disabledUser.id)
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 without user-id header', async function () {
-    const response = await context.request.get(`/${API_MAJOR_VERSION}/user/current`)
+    const response = await context.request.get(`/v1/user/current`)
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 with invalid user-id header', async function () {
-    const response = await context.request.get(`/${API_MAJOR_VERSION}/user/current`).set('User-Id', 'not-a-uuid')
+    const response = await context.request.get(`/v1/user/current`).set('User-Id', 'not-a-uuid')
     expect(response.status).to.equal(401)
   })
 })
@@ -87,7 +80,7 @@ describe('POST /login', async function () {
   })
   it('should return a valid auth token and a valid expiry unix time', async function () {
     const response = await context.request
-      .post(`/${API_MAJOR_VERSION}/login`)
+      .post(`/v1/login`)
       .set('Content-type', 'application/json')
       .send({ name: context.regularUser.name, password: context.regularUser.password })
 
@@ -103,7 +96,7 @@ describe('POST /login', async function () {
   })
   it('should return 404 if the user does not exist', async () => {
     const response = await context.request
-      .post(`/${API_MAJOR_VERSION}/login`)
+      .post(`/v1/login`)
       .set('Content-type', 'application/json')
       .send({ name: 'missingUser', password: 'weirdUsersPassword' })
 
@@ -111,11 +104,11 @@ describe('POST /login', async function () {
   })
   it('should return 400 Bad Request if the user name or password are missing', async () => {
     const response1 = await context.request
-      .post(`/${API_MAJOR_VERSION}/login`)
+      .post(`/v1/login`)
       .set('Content-type', 'application/json')
       .send({ name: '', password: 'password' })
     const response2 = await context.request
-      .post(`/${API_MAJOR_VERSION}/login`)
+      .post(`/v1/login`)
       .set('Content-type', 'application/json')
       .send({ name: 'name', password: '' })
 
@@ -125,7 +118,7 @@ describe('POST /login', async function () {
   it('should return 401 if wrong password', async () => {
     const password = 'some-random-password'
     const response = await context.request
-      .post(`/${API_MAJOR_VERSION}/login`)
+      .post(`/v1/login`)
       .set('Content-type', 'application/json')
       .send({ name: context.regularUser.name, password })
 
@@ -150,7 +143,7 @@ describe('GET /user/:id', function () {
 
   it('should return requested user as admin', async function () {
     const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .get(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
     expect(response.status).to.equal(200)
     assertAPIUserToDb(response.body, context.regularUser)
@@ -158,38 +151,36 @@ describe('GET /user/:id', function () {
 
   it('should return 401 as regular user', async function () {
     const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .get(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.regularUser.id)
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 as removed user', async function () {
     const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .get(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.disabledUser.id)
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 without user-id header', async function () {
-    const response = await context.request.get(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+    const response = await context.request.get(`/v1/user/${context.regularUser.id}`)
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 with invalid user-id header', async function () {
-    const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
-      .set('User-Id', 'not-a-uuid')
+    const response = await context.request.get(`/v1/user/${context.regularUser.id}`).set('User-Id', 'not-a-uuid')
     expect(response.status).to.equal(401)
   })
 
   it('should return 400 as with bad uuid as admin', async function () {
-    const response = await context.request.get(`/${API_MAJOR_VERSION}/user/foo`).set('User-Id', context.adminUser.id)
+    const response = await context.request.get(`/v1/user/foo`).set('User-Id', context.adminUser.id)
     expect(response.status).to.equal(400)
   })
 
   it('should return 404 as with incorrect uuid as admin', async function () {
     const response = await context.request
-      .get(`/${API_MAJOR_VERSION}/user/00000000-0000-0000-0000-000000000000`)
+      .get(`/v1/user/00000000-0000-0000-0000-000000000000`)
       .set('User-Id', context.adminUser.id)
     expect(response.status).to.equal(404)
   })
@@ -214,7 +205,7 @@ describe('PATCH /user/:id', function () {
 
   it('should update user name as admin', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ name: 'test-user-updated' })
     expect(response.status).to.equal(200)
@@ -227,7 +218,7 @@ describe('PATCH /user/:id', function () {
 
   it('should update user role as admin', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ role: 'admin' })
     expect(response.status).to.equal(200)
@@ -240,7 +231,7 @@ describe('PATCH /user/:id', function () {
 
   it('should update user and and role as admin', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(200)
@@ -253,7 +244,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 401 as regular user', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.regularUser.id)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(401)
@@ -261,7 +252,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 401 as removed user', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.disabledUser.id)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(401)
@@ -269,14 +260,14 @@ describe('PATCH /user/:id', function () {
 
   it('should return 401 without user-id header', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(401)
   })
 
   it('should return 401 with invalid user-id header', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', 'not-a-uuid')
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(401)
@@ -284,7 +275,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 404 with non-existent user', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/00000000-0000-0000-0000-000000000000`)
+      .patch(`/v1/user/00000000-0000-0000-0000-000000000000`)
       .set('User-Id', context.adminUser.id)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(404)
@@ -292,7 +283,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 400 with invalid user uuid', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/hello`)
+      .patch(`/v1/user/hello`)
       .set('User-Id', context.adminUser.id)
       .send({ name: 'test-user-updated', role: 'admin' })
     expect(response.status).to.equal(400)
@@ -300,7 +291,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 400 with empty name', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ name: '' })
     expect(response.status).to.equal(400)
@@ -308,7 +299,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 400 with invalid role', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ role: 'invalid' })
     expect(response.status).to.equal(400)
@@ -316,7 +307,7 @@ describe('PATCH /user/:id', function () {
 
   it('should return 409 with name change is exists', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ name: context.adminUser.name })
     expect(response.status).to.equal(409)
@@ -324,7 +315,7 @@ describe('PATCH /user/:id', function () {
 
   it('should succeed with name change if name is same', async function () {
     const response = await context.request
-      .patch(`/${API_MAJOR_VERSION}/user/${context.regularUser.id}`)
+      .patch(`/v1/user/${context.regularUser.id}`)
       .set('User-Id', context.adminUser.id)
       .send({ name: context.regularUser.name })
     expect(response.status).to.equal(200)

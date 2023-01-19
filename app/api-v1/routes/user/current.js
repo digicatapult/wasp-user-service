@@ -1,11 +1,11 @@
-const validatorUtil = require('../../../validatorUtil')
+import { isUuidInvalid } from '../../../validatorUtil.js'
 
-module.exports = function (userService) {
+export default function (userService) {
   const doc = {
     GET: async function getUserHandler(req, res) {
       const currentUserId = req.headers['user-id']
 
-      if (!currentUserId || validatorUtil.isUuidInvalid(currentUserId)) {
+      if (!currentUserId || isUuidInvalid(currentUserId)) {
         res.status(401).json({})
         return
       }

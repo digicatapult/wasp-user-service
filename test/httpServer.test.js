@@ -1,8 +1,10 @@
-const { describe, before, it } = require('mocha')
-const { expect } = require('chai')
+import { describe, before, it } from 'mocha'
+import { expect } from 'chai'
 
-const { setupServer } = require('./helpers/server')
-const { API_VERSION } = require('../app/env')
+import { setupServer } from './helpers/server.js'
+import env from '../app/env.js'
+
+const { API_VERSION } = env
 
 describe('health', function () {
   const context = {}

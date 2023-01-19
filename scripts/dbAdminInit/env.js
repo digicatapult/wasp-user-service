@@ -1,4 +1,4 @@
-const envalid = require('envalid')
+import envalid from 'envalid'
 
 const vars = envalid.cleanEnv(
   process.env,
@@ -16,4 +16,4 @@ const vars = envalid.cleanEnv(
   }
 )
 
-module.exports = vars
+export default vars
