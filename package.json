@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
