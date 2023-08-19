@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.49",
+  "version": "0.1.50",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/digicatapult/wasp-user-service#readme",
   "dependencies": {
-    "bcrypt": "5.1.0",
+    "bcrypt": "5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
