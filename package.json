@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.65",
+  "version": "0.1.66",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "moment": "^2.29.4",
     "node-fetch": "^3.3.2",
     "pg": "^8.11.3",
-    "pino": "^8.15.5",
+    "pino": "^8.15.6",
     "pino-http": "^8.5.0",
     "swagger-ui-express": "^5.0.0",
     "validator": "^13.11.0"
