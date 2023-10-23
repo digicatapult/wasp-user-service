@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.71",
+  "version": "0.1.72",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "c8": "^8.0.1",
     "chai": "^4.3.10",
     "depcheck": "^1.4.7",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "jwt-simple": "^0.5.6",
