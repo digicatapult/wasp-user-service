@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.82",
+  "version": "0.1.83",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -58,7 +58,7 @@
     "mocha": "^10.2.0",
     "nodemon": "^3.0.2",
     "pino-colada": "^2.2.2",
-    "prettier": "^3.1.0",
+    "prettier": "^3.1.1",
     "supertest": "^6.3.3"
   }
 }
