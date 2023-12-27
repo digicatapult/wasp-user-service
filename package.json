@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.88",
+  "version": "0.1.89",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -53,7 +53,7 @@
     "depcheck": "^1.4.7",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.1",
+    "eslint-plugin-prettier": "^5.1.2",
     "jwt-simple": "^0.5.6",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.2",
