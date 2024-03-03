@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-user-service",
-  "version": "0.1.113",
+  "version": "0.1.114",
   "description": "Service for WASP",
   "main": "app/index.js",
   "scripts": {
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.10",
     "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "c8": "^8.0.1",
+    "c8": "^9.1.0",
     "chai": "^4.4.1",
     "depcheck": "^1.4.7",
     "eslint": "^8.57.0",
